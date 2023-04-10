@@ -5,6 +5,8 @@ import { Link } from "react-router-dom"
 import styled from "styled-components"
 import Axios from "axios"
 
+//import { AlertDismissibleExample } from "./AlertDismissibleExample"
+
 const Styles = styled.div`
   a,
   .navbar-brand,
@@ -20,6 +22,8 @@ export default function NavBar() {
   const [showLogIn, setShowLogIn] = useState(false)
   const [showSignUp, setShowSignUp] = useState(false)
 
+  //const [successReg, setSuccessReg] = useState(false)
+
   const handleCloseLogIn = () => setShowLogIn(false)
   const handleCloseSignUp = () => setShowSignUp(false)
   const handleShowLogIn = () => setShowLogIn(true)
@@ -27,25 +31,31 @@ export default function NavBar() {
 
   const [mailReg, setMailReg] = useState("")
   const [passwordReg, setPasswordReg] = useState("")
+  const [nameReg, setNameReg] = useState("")
   const [labGroupReg, setLabGroupReg] = useState("")
   const [roleReg, setRoleReg] = useState("")
 
   const [mailLog, setMailLog] = useState("")
   const [passwordLog, setPasswordlog] = useState("")
 
-  const login = () => {
-    Axios.post("http://localhost:5000/login", {
-      mail: mailLog,
-      password: passwordLog,
-    }).then((response) => {
-      console.log(response)
-    })
+  const login = (err) => {
+    try {
+      Axios.post("http://localhost:5000/login", {
+        mail: mailLog,
+        password: passwordLog,
+      }).then((response) => {
+        console.log(response)
+      })
+    } catch {
+      return err
+    }
   }
 
   const register = () => {
     Axios.post("http://localhost:5000/registerUser", {
       mail: mailReg,
       password: passwordReg,
+      name: nameReg,
       labGroup: labGroupReg,
       role: roleReg,
     }).then((response) => {
@@ -58,13 +68,12 @@ export default function NavBar() {
       <Styles>
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
           <Container>
-            <Navbar.Brand>GrageUs</Navbar.Brand>
+            <Nav.Link as={Link} to="/">
+              <Navbar.Brand>GrageUs</Navbar.Brand>
+            </Nav.Link>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="me-auto">
-                <Nav.Link as={Link} to="/">
-                  Home
-                </Nav.Link>
                 <Nav.Link as={Link} to="/about">
                   About
                 </Nav.Link>
@@ -85,7 +94,6 @@ export default function NavBar() {
           </Container>
         </Navbar>
       </Styles>
-
       <Modal show={showLogIn} onHide={handleCloseLogIn}>
         <Modal.Header closeButton>
           <Modal.Title>Log In</Modal.Title>
@@ -118,13 +126,14 @@ export default function NavBar() {
             <Form.Group className="mb-3" controlId="formBasicCheckBox">
               <Form.Check type="checkbox" label="Remember me" />
             </Form.Group>
-            <Button variant="primary" onClick={login}>
-              Submit
-            </Button>
+            <Nav.Link as={Link} to="/mainContent">
+              <Button variant="primary" onClick={login()}>
+                Submit
+              </Button>
+            </Nav.Link>
           </Form>
         </Modal.Body>
       </Modal>
-
       <Modal show={showSignUp} onHide={handleCloseSignUp}>
         <Modal.Header closeButton>
           <Modal.Title>Sign Up</Modal.Title>
@@ -155,6 +164,16 @@ export default function NavBar() {
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicInput">
+              <Form.Label>Name & Surname</Form.Label>
+              <Form.Control
+                type="name"
+                placeholder="Enter your name and surname"
+                onChange={(e) => {
+                  setNameReg(e.target.value)
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicInput">
               <Form.Label>Laboratory Group</Form.Label>
               <Form.Control
                 type="group"
@@ -164,6 +183,7 @@ export default function NavBar() {
                 }}
               />
             </Form.Group>
+
             <Form.Group className="mb-3" controlId="formBasicCheckBox">
               <Form.Label>Choose your role</Form.Label>
               <Form.Select
@@ -172,14 +192,16 @@ export default function NavBar() {
                   setRoleReg(e.target.value)
                 }}
               >
-                <option value="Student">Student</option>
-                <option value="GroupLeader">Group Leader</option>
                 <option value="Professor">Professor</option>
+                <option value="GroupLeader">Group Leader</option>
+                <option value="Student">Student</option>
               </Form.Select>
             </Form.Group>
-            <Button variant="primary" onClick={register}>
-              Submit
-            </Button>
+            <Nav.Link as={Link} to="/mainContent">
+              <Button variant="primary" type="submit" onClick={register}>
+                Submit
+              </Button>
+            </Nav.Link>
           </Form>
         </Modal.Body>
       </Modal>

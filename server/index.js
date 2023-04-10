@@ -1,22 +1,23 @@
+require("dotenv").config()
 const express = require("express")
-try {
-  var mysql = require("mysql")
-} catch (err) {
-  console.log(
-    "Cannot find `mysql` module. Is it installed ? Try `npm install mysql` or `npm install`."
-  )
-}
-
-const config = require("config")
+const sequelize = require("./db")
+const models = require("./models/models")
 const cors = require("cors")
+const router = require("./Routes/index")
+const errorHandler = require("./middleware/ErrorHandlingMiddleware")
+
+const PORT = process.env.PORT || 5000
 
 const app = express()
-const PORT = config.get("serverPort")
-
-app.use(express.json())
 app.use(cors())
+app.use(express.json())
+app.use("/api", router)
 
+app.use(errorHandler) //Registrarion of the errorHandler always must be located in the end!!
+
+/*
 const db = mysql.createConnection({
+  // host: "host.docker.internal",
   host: "localhost",
   user: "root",
   password: "1235",
@@ -34,11 +35,11 @@ db.connect((error) => {
 app.post("/registerUser", (req, res) => {
   const mail = req.body.mail
   const password = req.body.password
+  const name = req.body.name
   const labGroup = req.body.labGroup
   const role = req.body.role
   let roleTemp = 0
 
-  console.log(role)
   if (role === "Student") {
     roleTemp = 3
     console.log(roleTemp)
@@ -51,8 +52,8 @@ app.post("/registerUser", (req, res) => {
   }
 
   db.query(
-    "INSERT INTO users (mail, password, laboratory_group, role_id) VALUES (?,?,?,?)",
-    [mail, password, labGroup, roleTemp],
+    "INSERT INTO user (mail, password, name, lab_group_id, role_id) VALUES (?,?,?,?,?)",
+    [mail, password, name, labGroup, roleTemp],
     (err, result) => {
       if (err) {
         console.log(err)
@@ -68,7 +69,7 @@ app.post("/login", (req, res) => {
   const password = req.body.password
 
   db.query(
-    "SELECT * FROM users WHERE mail = ? AND password = ?",
+    "SELECT * FROM user WHERE mail = ? AND password = ?",
     [mail, password],
     (err, result) => {
       if (err) {
@@ -83,9 +84,15 @@ app.post("/login", (req, res) => {
     }
   )
 })
+*/
+const start = async () => {
+  try {
+    await sequelize.authenticate()
+    await sequelize.sync()
+    app.listen(PORT, () => {
+      console.log("Server started on port ", PORT)
+    })
+  } catch (e) {}
+}
 
-try {
-  app.listen(PORT, () => {
-    console.log("Server started on port ", PORT)
-  })
-} catch (e) {}
+start()
