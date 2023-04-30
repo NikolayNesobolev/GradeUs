@@ -1,21 +1,22 @@
 const ApiError = require("../error/ApiError")
 const { User } = require("../models/models")
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 
-const generateJwt = (id, mail, name, labGroupId, roleId, projectId) => {
+const generateJwt = (id, mail, name, index, labGroupId, roleId, projectId) => {
   return jwt.sign(
     {
       id,
       mail,
       name,
+      index,
       labGroupId,
       roleId,
       projectId,
     },
     process.env.SECRET_KEY,
     {
-      expiresIn: "24h",
+      expiresIn: "2920h",
     }
   )
 }
@@ -23,7 +24,8 @@ const generateJwt = (id, mail, name, labGroupId, roleId, projectId) => {
 class UserController {
   async registration(req, res, next) {
     try {
-      const { mail, password, name, labGroupId, roleId, projectId } = req.body
+      const { mail, password, name, index, labGroupId, roleId, projectId } =
+        req.body
       if (!mail || !password) {
         return next(ApiError.badRequest("Incorrect email or password"))
       }
@@ -38,6 +40,7 @@ class UserController {
         mail,
         password: hashPassword,
         name,
+        index,
         labGroupId,
         roleId,
         projectId,
@@ -46,6 +49,7 @@ class UserController {
         user.id,
         user.mail,
         user.name,
+        user.index,
         user.labGroupId,
         user.roleId,
         user.projectId
@@ -72,6 +76,7 @@ class UserController {
         user.id,
         user.mail,
         user.name,
+        user.index,
         user.labGroupId,
         user.roleId,
         user.projectId
@@ -83,16 +88,42 @@ class UserController {
     }
   }
 
-  async editRole(req, res) {
+  async createUser(req, res, next) {
     try {
-      const { name } = req.params
-      const studentName = await User.update(
-        { roleId: req.body.roleId },
-        { where: { name } }
+      const { mail, password, name, index, labGroupId, roleId, projectId } =
+        req.body
+      if (!mail || !password) {
+        return next(ApiError.badRequest("Incorrect email or password"))
+      }
+      const candidate = await User.findOne({ where: { mail } })
+      if (candidate) {
+        return next(
+          ApiError.badRequest("A user with such an email already exists")
+        )
+      }
+      const hashPassword = await bcrypt.hash(password, 5)
+      const user = await User.create({
+        mail,
+        password: hashPassword,
+        name,
+        index,
+        labGroupId,
+        roleId,
+        projectId,
+      })
+      const token = generateJwt(
+        user.id,
+        user.mail,
+        user.name,
+        user.index,
+        user.labGroupId,
+        user.roleId,
+        user.projectId
       )
-      return res.json({ message: "Successfully updated!" })
+      return res.json({ token })
     } catch (e) {
-      return res.status(500).json({ message: "Update failed!" })
+      console.log(e)
+      res.status(400).json({ message: "Registration error" })
     }
   }
 
@@ -131,12 +162,33 @@ class UserController {
         req.user.id,
         req.user.mail,
         req.user.name,
+        req.user.index,
         req.user.labGroupId,
         req.user.roleId,
         req.user.projectId
       )
       return res.json({ token })
     } catch (e) {}
+  }
+
+  async getAll(req, res) {
+    try {
+      let { labGroupId } = req.query
+      let users
+      if (!labGroupId) {
+        users = await User.findAll()
+      }
+      if (labGroupId) {
+        users = await User.findAll({ where: { labGroupId } })
+      }
+      return res.json(users)
+    } catch (e) {}
+  }
+
+  async deleteUser(req, res) {
+    const { id } = req.params
+    const user = await User.destroy({ where: { id } })
+    return res.json({ message: "Successfully deleted!" })
   }
 }
 

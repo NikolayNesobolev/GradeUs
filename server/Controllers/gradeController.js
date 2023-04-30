@@ -4,14 +4,9 @@ const ApiError = require("../error/ApiError")
 class GradeController {
   async create(req, res, next) {
     try {
-      const { name, gradeCat0, gradeCat1, gradeCat2, gradeCat3, projectId } =
-        req.body
+      const { gradeRes, projectId } = req.body
       const grades = await Grade.create({
-        name,
-        gradeCat0,
-        gradeCat1,
-        gradeCat2,
-        gradeCat3,
+        gradeRes,
         projectId,
       })
       return res.json({ grades })
@@ -27,10 +22,21 @@ class GradeController {
     } catch (e) {}
   }
 
-  async deleteGrade(req, res) {
-    const { id } = req.params
-    const grade = await Grade.destroy({ where: { id } })
-    return res.json({ message: "Successfully deleted!" })
+  async editGrade(req, res) {
+    try {
+      const { id } = req.params
+      let gradeResult
+      const { gradeRes } = req.body
+      if (gradeRes) {
+        gradeResult = await Grade.update(
+          { gradeRes: req.body.gradeRes },
+          { where: { id } }
+        )
+      }
+      return res.json({ message: "Successfully updated!" })
+    } catch (e) {
+      return res.status(500).json({ message: "Update failed!" })
+    }
   }
 }
 

@@ -1,11 +1,13 @@
-import React, { useState } from "react"
+import React, { useContext } from "react"
 import { Navbar, Nav, Button, Container, Modal, Form } from "react-bootstrap"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
-import Axios from "axios"
+import { observer } from "mobx-react-lite"
+import { useNavigate } from "react-router-dom"
 
-//import { AlertDismissibleExample } from "./AlertDismissibleExample"
+import { Context } from "../index"
+import { ADMIN_ROUTE, HOME_ROUTE, LOGIN_ROUTE } from "../utils/consts"
 
 const Styles = styled.div`
   a,
@@ -18,49 +20,14 @@ const Styles = styled.div`
   }
 `
 
-export default function NavBar() {
-  const [showLogIn, setShowLogIn] = useState(false)
-  const [showSignUp, setShowSignUp] = useState(false)
+const NavBar = observer(() => {
+  const { user } = useContext(Context)
+  const navigate = useNavigate()
 
-  //const [successReg, setSuccessReg] = useState(false)
-
-  const handleCloseLogIn = () => setShowLogIn(false)
-  const handleCloseSignUp = () => setShowSignUp(false)
-  const handleShowLogIn = () => setShowLogIn(true)
-  const handleShowSignUp = () => setShowSignUp(true)
-
-  const [mailReg, setMailReg] = useState("")
-  const [passwordReg, setPasswordReg] = useState("")
-  const [nameReg, setNameReg] = useState("")
-  const [labGroupReg, setLabGroupReg] = useState("")
-  const [roleReg, setRoleReg] = useState("")
-
-  const [mailLog, setMailLog] = useState("")
-  const [passwordLog, setPasswordlog] = useState("")
-
-  const login = (err) => {
-    try {
-      Axios.post("http://localhost:5000/login", {
-        mail: mailLog,
-        password: passwordLog,
-      }).then((response) => {
-        console.log(response)
-      })
-    } catch {
-      return err
-    }
-  }
-
-  const register = () => {
-    Axios.post("http://localhost:5000/registerUser", {
-      mail: mailReg,
-      password: passwordReg,
-      name: nameReg,
-      labGroup: labGroupReg,
-      role: roleReg,
-    }).then((response) => {
-      console.log(response)
-    })
+  const logOut = () => {
+    user.setUser({})
+    user.setIsAuth(false)
+    navigate(HOME_ROUTE)
   }
 
   return (
@@ -68,33 +35,56 @@ export default function NavBar() {
       <Styles>
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
           <Container>
-            <Nav.Link as={Link} to="/">
-              <Navbar.Brand>GrageUs</Navbar.Brand>
+            <Nav.Link as={Link} to={HOME_ROUTE}>
+              <Navbar.Brand style={{ color: "white" }}>GrageUs</Navbar.Brand>
             </Nav.Link>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
-              <Nav className="me-auto">
-                <Nav.Link as={Link} to="/about">
-                  About
-                </Nav.Link>
-              </Nav>
-              <Nav>
-                <Button
-                  variant="primary"
-                  className="me-2"
-                  onClick={handleShowLogIn}
-                >
-                  Log In
-                </Button>
-                <Button variant="secondary" onClick={handleShowSignUp}>
-                  Sign Up
-                </Button>
-              </Nav>
+              {user.isAuth ? (
+                <>
+                  <Nav className="me-auto">
+                    <Nav.Link as={Link} to="/about">
+                      About
+                    </Nav.Link>
+                  </Nav>
+                  <Nav className="ms-auto" style={{ color: "white" }}>
+                    <Button
+                      variant={"outline-light"}
+                      onClick={() => navigate(ADMIN_ROUTE)}
+                    >
+                      Admin Panel
+                    </Button>
+                    <Button
+                      variant={"outline-light"}
+                      className="ms-2"
+                      onClick={() => logOut()}
+                    >
+                      Log Out
+                    </Button>
+                  </Nav>
+                </>
+              ) : (
+                <>
+                  <Nav className="me-auto">
+                    <Nav.Link as={Link} to="/about">
+                      About
+                    </Nav.Link>
+                  </Nav>
+                  <Nav className="ms-auto" style={{ color: "white" }}>
+                    <Button
+                      variant={"outline-light"}
+                      onClick={() => navigate(LOGIN_ROUTE)}
+                    >
+                      Authorization
+                    </Button>
+                  </Nav>
+                </>
+              )}
             </Navbar.Collapse>
           </Container>
         </Navbar>
       </Styles>
-      <Modal show={showLogIn} onHide={handleCloseLogIn}>
+      <Modal>
         <Modal.Header closeButton>
           <Modal.Title>Log In</Modal.Title>
         </Modal.Header>
@@ -102,39 +92,25 @@ export default function NavBar() {
           <Form>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Email Adress</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                onChange={(e) => {
-                  setMailLog(e.target.value)
-                }}
-              />
+              <Form.Control type="email" placeholder="Enter email" />
               <Form.Text className="text-muted">
                 We'll never share your email with anyone else.
               </Form.Text>
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter password"
-                onChange={(e) => {
-                  setPasswordlog(e.target.value)
-                }}
-              />
+              <Form.Control type="password" placeholder="Enter password" />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicCheckBox">
               <Form.Check type="checkbox" label="Remember me" />
             </Form.Group>
             <Nav.Link as={Link} to="/mainContent">
-              <Button variant="primary" onClick={login()}>
-                Submit
-              </Button>
+              <Button variant="primary">Submit</Button>
             </Nav.Link>
           </Form>
         </Modal.Body>
       </Modal>
-      <Modal show={showSignUp} onHide={handleCloseSignUp}>
+      <Modal>
         <Modal.Header closeButton>
           <Modal.Title>Sign Up</Modal.Title>
         </Modal.Header>
@@ -142,63 +118,37 @@ export default function NavBar() {
           <Form>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Email Adress</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                onChange={(e) => {
-                  setMailReg(e.target.value)
-                }}
-              />
+              <Form.Control type="email" placeholder="Enter email" />
               <Form.Text className="text-muted">
                 We'll never share your email with anyone else.
               </Form.Text>
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter password"
-                onChange={(e) => {
-                  setPasswordReg(e.target.value)
-                }}
-              />
+              <Form.Control type="password" placeholder="Enter password" />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicInput">
               <Form.Label>Name & Surname</Form.Label>
               <Form.Control
                 type="name"
                 placeholder="Enter your name and surname"
-                onChange={(e) => {
-                  setNameReg(e.target.value)
-                }}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicInput">
               <Form.Label>Laboratory Group</Form.Label>
-              <Form.Control
-                type="group"
-                placeholder="Group"
-                onChange={(e) => {
-                  setLabGroupReg(e.target.value)
-                }}
-              />
+              <Form.Control type="group" placeholder="Group" />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicCheckBox">
               <Form.Label>Choose your role</Form.Label>
-              <Form.Select
-                aria-label="role selector"
-                onChange={(e) => {
-                  setRoleReg(e.target.value)
-                }}
-              >
+              <Form.Select aria-label="role selector">
                 <option value="Professor">Professor</option>
                 <option value="GroupLeader">Group Leader</option>
                 <option value="Student">Student</option>
               </Form.Select>
             </Form.Group>
             <Nav.Link as={Link} to="/mainContent">
-              <Button variant="primary" type="submit" onClick={register}>
+              <Button variant="primary" type="submit">
                 Submit
               </Button>
             </Nav.Link>
@@ -207,4 +157,6 @@ export default function NavBar() {
       </Modal>
     </>
   )
-}
+})
+
+export default NavBar

@@ -1,0 +1,15 @@
+{
+  "name": "praca-dyplomowa-gradeus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "docker:build": "docker-compose -p gradeus build",
+    "docker:down": "docker-compose -p gradeus down",
+    "docker:up": "docker-compose -p gradeus up",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

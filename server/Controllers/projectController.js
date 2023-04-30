@@ -3,29 +3,18 @@ const ApiError = require("../error/ApiError")
 
 class ProjectController {
   async create(req, res) {
-    const {
-      projectName,
-      studentsName,
-      category0,
-      category1,
-      category2,
-      category3,
-    } = req.body
+    const { projectName, project, labGroupId } = req.body
     const projectObj = await Project.create({
       projectName,
-      studentsName,
-      category0,
-      category1,
-      category2,
-      category3,
+      labGroupId,
     })
     return res.json({ projectObj })
   }
 
   async getAll(req, res) {
     try {
-      const labGroups = await Project.findAll()
-      return res.json(labGroups)
+      const projects = await Project.findAll()
+      return res.json(projects)
     } catch (e) {}
   }
 

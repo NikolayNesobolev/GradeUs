@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "gradeus-385014",
+  "private_key_id": "e8884dae9ba5ead019ca9ec42968559dd786d926",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCaMZxfmwtd7W5g\nhslYXBWi7B3ZYnqnIVTSqpsspZb85LufemEFTysJXUq/feGm7v5wF5NJcjhLCkQD\nO7EjcrsWnQj3JkPrVKLUKYDgsWYkQfJenCH9c0IEFKKMau5T/ZgBpDm5k0XE+AyF\nk4eKo+IN7U2VpZ4bwV8VWbZ2M+zKaEjwIYjN5B1kvQykUyH0InvY/cU7qF8udgia\nDTQPDbXBsESoshTEvKyv+qF+cb5Ubj931TLWoKStUW0Z6MO7Zvro2cYRxeywsFj0\nGmkS4MrPe+YVeWvdwzf4fvsDxL4OsK70JsPPp+BAuAoA/qLKvB63j+gZhLXj3gxl\nQ6UZKHjdAgMBAAECggEABg8KFeY6kfaDWYogs71GJ8VCd/+XxUtScROwlLzHj2Jw\n4X38ykL3dGVky3XBQRHpHNNXheS8NwcG4wY8ekgNRDQOVxQuSe5k41Rjj5CqhfHm\nBn2Sk71GNdeJh14O3tO0xLQk0evdeDU59e61CvrQP8IlENecFcgC05mXYvlWP6Hx\nRUINLoIEapomE+EajyqxM/Rn5lE1kD3iKPlCHvKkGYR0IVUbNtJnSDeCptD6Qns/\nLuDNF1cS/Lwo+6pz7PdHmME2FCQdFlmq8Q+ADeZXVQSP2HCxxXpZdZMhZ1GEy4ZD\nu3hkmPv8KZBfayPkEaRouxCUdx2DbGrOl6CMjoNSyQKBgQDLJP00DDXH+8M5P6Zy\nbmhymGC/UYCJP5gv4UzpI7mxgexYbOOD7i18CySFHMEYgIdtKOPpVIOJxTlpvmIA\nQrPMeQmXF7SRMTZebLdg/VFPdD5zSXjoYvNZoz2ilxZfCHEskgU3mjZAkwWAhnwD\neU+7PVFjUmLR1q6zGbX6KM0rpQKBgQDCUB9r0bOHy4Gar6C6QHdokZGCw3Vu8ouN\nq41rVPJrX3oxwOuk3yqo2HOgeOPK4KkV3bbUxmNbS25ime20iHOAgfR+yg1/Vuau\nXykkhqG8U3YvsuG1sLsWdqOC+lIYjp69dItnib3gt/zttEHvKs3cBZGRtPJ3tGMt\nF+KRIWNy2QKBgQCi6RX5wHT83MUxyv6jtDEk/VhQ9X58ErjsZOT17sWDOesc+q32\nZnKpkJIIAghEqwZwHyOvQix+tuCVEa2sAdII/2QWfFc9PNcaIFtrd5rWeiV+9QP2\ncSwwzX2nPz0clzuTf8KZVZ1+aak26iLX8lhjkwgK+83t9BmD3fGXHVN0VQKBgAqK\nVBoCJw3vsRkV+87+njuS4eTI+37IM1+89Y/j7L58UGGQiHfKD0NXcnY6+IhRxXpF\nK5zBIjSak+NPXECVwkYvRnb2OOM2cI725IFxuCZCFMAjoPC9JHjkeJwrPfbNDblT\nMBiutRkSgerXA1iY5s/PkYTo3to1c8fHaufaes2JAoGBAMZ2G2RXdOCAzI+eoe23\nZiSsOmUrJeysWAjut/xRi7c1rgWV33VeZMHWw1CXjgrSOn26be3bGcVf3b5TTWF+\n9CBsYU4AX6nNz9CGuewWjCFsSQi5DVxarXGHaAiXPVREvPSW79s8j98SXGwGsnRs\nlk5JsLyZzxYYig8tW6TJAbR4\n-----END PRIVATE KEY-----\n",
+  "client_email": "test-upload@gradeus-385014.iam.gserviceaccount.com",
+  "client_id": "111897541823816940516",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/test-upload%40gradeus-385014.iam.gserviceaccount.com"
+}

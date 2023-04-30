@@ -1,0 +1,5 @@
+Rebuild images:                     npm run docker:build
+
+Stop all running containers:        npm run docker:down
+
+Start containers:                   npm run docker:up

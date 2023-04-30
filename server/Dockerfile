@@ -1,14 +1,18 @@
 FROM node:16-alpine
 
-WORKDIR /app_server
+RUN mkdir -p /app/config /app/src
 
-COPY package.json /app_server/
+WORKDIR /app
+
+COPY package.json /app/package.json
+
+COPY package-lock.json /app/package-lock.json
 
 RUN npm install
 
 COPY . .
 
-EXPOSE 5000
+#EXPOSE 5000
 
 CMD ["npm", "start"]
 
