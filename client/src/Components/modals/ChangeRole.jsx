@@ -6,6 +6,7 @@ import { editUserPrivileg, fetchUsers } from "../../http/userAPI"
 import { fetchRoles } from "../../http/roleAPI"
 
 const ChangeRole = observer(({ show, onHide }) => {
+  const { subject } = useContext(Context)
   const { laboratoryGroup } = useContext(Context)
   const { user } = useContext(Context)
   const { roleObj } = useContext(Context)
@@ -17,15 +18,26 @@ const ChangeRole = observer(({ show, onHide }) => {
 
   const editPriv = () => {
     try {
-      editUserPrivileg(user.selectedUser.name, {
-        roleId: roleObj.selectedRole.id,
-      }).then((data) => {
-        user.setSelectedUser("")
-        roleObj.setSelectedRole("")
-        onHide()
-      })
+      if (
+        typeof subject.selectedSubject.name === "undefined" ||
+        typeof laboratoryGroup.selectedLabGroup.labGroup === "undefined" ||
+        typeof user.selectedUser.name === "undefined" ||
+        typeof roleObj.selectedRole.id === "undefined"
+      ) {
+        throw new SyntaxError(
+          "You must to choose a subject, laboratory, student's name and new role from the list!"
+        )
+      } else {
+        editUserPrivileg(user.selectedUser.name, {
+          roleId: roleObj.selectedRole.id,
+        }).then((data) => {
+          user.setSelectedUser("")
+          roleObj.setSelectedRole("")
+          onHide()
+        })
+      }
     } catch (e) {
-      console.log(e)
+      alert(e.message)
     }
   }
 
@@ -39,12 +51,27 @@ const ChangeRole = observer(({ show, onHide }) => {
       <Modal.Body>
         <Dropdown className="mt-3">
           <Dropdown.Toggle>
+            {subject.selectedSubject.name || "Choose subject"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {subject.subjects.map((subj) => (
+              <Dropdown.Item
+                onClick={() => subject.setSelectedSubject(subj)}
+                key={subj.id}
+              >
+                {subj.name}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown className="mt-3">
+          <Dropdown.Toggle>
             {laboratoryGroup.selectedLabGroup.labGroup ||
-              "Choose laboratory group"}
+              "Choose laboratiry group"}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {laboratoryGroup.labGroups
-              //.filter(() => labGroupState === user.labGroupId)
+              .filter((group) => group.subjectId === subject.selectedSubject.id)
               .map((group) => (
                 <Dropdown.Item
                   onClick={() => laboratoryGroup.setSelectedLabGroup(group)}
@@ -61,13 +88,15 @@ const ChangeRole = observer(({ show, onHide }) => {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {user.users
-              //.filter(() => labGroupState === user.labGroupId)
-              .map((student) => (
+              .filter(
+                (usr) => laboratoryGroup.selectedLabGroup.id === usr.labGroupId
+              )
+              .map((usr) => (
                 <Dropdown.Item
-                  onClick={() => user.setSelectedUser(student)}
-                  key={student.id}
+                  onClick={() => user.setSelectedUser(usr)}
+                  key={usr.id}
                 >
-                  {student.name}
+                  {usr.name}
                 </Dropdown.Item>
               ))}
           </Dropdown.Menu>

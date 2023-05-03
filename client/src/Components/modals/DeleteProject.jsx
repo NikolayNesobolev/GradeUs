@@ -19,12 +19,22 @@ const DeleteProject = observer(({ show, onHide }) => {
 
   const deleteProj = () => {
     try {
-      deleteProject(projectObj.selectedProject.id).then((data) => {
-        projectObj.setSelectedProject("")
-        onHide()
-      })
+      if (
+        typeof subject.selectedSubject.name === "undefined" ||
+        typeof laboratoryGroup.selectedLabGroup.labGroup === "undefined" ||
+        typeof projectObj.selectedProject.id === "undefined"
+      ) {
+        throw new SyntaxError(
+          "You must to choose a subject, laboratory and project group from the list!"
+        )
+      } else {
+        deleteProject(projectObj.selectedProject.id).then((data) => {
+          projectObj.setSelectedProject("")
+          onHide()
+        })
+      }
     } catch (e) {
-      console.log(e)
+      alert(e.message)
     }
   }
 
@@ -57,14 +67,16 @@ const DeleteProject = observer(({ show, onHide }) => {
               "Choose laboratiry group"}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            {laboratoryGroup.labGroups.map((group) => (
-              <Dropdown.Item
-                onClick={() => laboratoryGroup.setSelectedLabGroup(group)}
-                key={group.id}
-              >
-                {group.labGroup}
-              </Dropdown.Item>
-            ))}
+            {laboratoryGroup.labGroups
+              .filter((group) => group.subjectId === subject.selectedSubject.id)
+              .map((group) => (
+                <Dropdown.Item
+                  onClick={() => laboratoryGroup.setSelectedLabGroup(group)}
+                  key={group.id}
+                >
+                  {group.labGroup}
+                </Dropdown.Item>
+              ))}
           </Dropdown.Menu>
         </Dropdown>
         <Dropdown className="mt-3">
@@ -73,7 +85,10 @@ const DeleteProject = observer(({ show, onHide }) => {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {projectObj.projects
-              //.filter(() => labGroupState === user.labGroupId)
+              .filter(
+                (proj) =>
+                  laboratoryGroup.selectedLabGroup.id === proj.labGroupId
+              )
               .map((proj) => (
                 <Dropdown.Item
                   onClick={() => projectObj.setSelectedProject(proj)}

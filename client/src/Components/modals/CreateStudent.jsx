@@ -8,6 +8,7 @@ import { fetchProjects } from "../../http/projectAPI"
 import { createUser } from "../../http/userAPI"
 
 const CreateStudent = observer(({ show, onHide }) => {
+  const { user } = useContext(Context)
   const { roleObj } = useContext(Context)
   const { laboratoryGroup } = useContext(Context)
   const { projectObj } = useContext(Context)
@@ -20,7 +21,6 @@ const CreateStudent = observer(({ show, onHide }) => {
   useEffect(() => {
     fetchLabGroups().then((data) => laboratoryGroup.setLabGroups(data))
     fetchRoles().then((data) => roleObj.setRoles(data))
-    fetchProjects().then((data) => projectObj.setProjects(data))
   }, [laboratoryGroup, roleObj, projectObj])
 
   const addUser = () => {
@@ -41,7 +41,7 @@ const CreateStudent = observer(({ show, onHide }) => {
         onHide()
       })
     } catch (e) {
-      console.log(e)
+      alert(e.response.data.message)
     }
   }
 

@@ -17,12 +17,21 @@ const DeleteLabGroup = observer(({ show, onHide }) => {
 
   const deleteLabGroup = () => {
     try {
-      deleteGroup(laboratoryGroup.selectedLabGroup.id).then((data) => {
-        laboratoryGroup.setSelectedLabGroup("")
-        onHide()
-      })
+      if (
+        typeof subject.selectedSubject.name === "undefined" ||
+        typeof laboratoryGroup.selectedLabGroup.labGroup === "undefined"
+      ) {
+        throw new SyntaxError(
+          "You must to choose a subject and laboratory group from the list!"
+        )
+      } else {
+        deleteGroup(laboratoryGroup.selectedLabGroup.id).then((data) => {
+          laboratoryGroup.setSelectedLabGroup("")
+          onHide()
+        })
+      }
     } catch (e) {
-      console.log(e)
+      alert(e.message)
     }
   }
 
@@ -56,7 +65,7 @@ const DeleteLabGroup = observer(({ show, onHide }) => {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {laboratoryGroup.labGroups
-              //.filter(() => labGroupState === user.labGroupId)
+              .filter((group) => group.subjectId === subject.selectedSubject.id)
               .map((group) => (
                 <Dropdown.Item
                   onClick={() => laboratoryGroup.setSelectedLabGroup(group)}

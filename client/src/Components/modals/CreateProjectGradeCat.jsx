@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite"
 import { createProjectGradeCategory } from "../../http/projectGradeCategoriesAPI"
 
 const CreateProjectGradeCat = observer(({ show, onHide }) => {
+  const { subject } = useContext(Context)
   const { laboratoryGroup } = useContext(Context)
   const { projectObj } = useContext(Context)
 
@@ -13,9 +14,9 @@ const CreateProjectGradeCat = observer(({ show, onHide }) => {
   const [cat2Value, setCat2Value] = useState("")
   const [cat3Value, setCat3Value] = useState("")
 
-  const addCats = () => {
+  const addCats = async () => {
     try {
-      createProjectGradeCategory({
+      await createProjectGradeCategory({
         category0: cat0Value,
         category1: cat1Value,
         category2: cat2Value,
@@ -30,7 +31,7 @@ const CreateProjectGradeCat = observer(({ show, onHide }) => {
         onHide()
       })
     } catch (e) {
-      console.log(e)
+      alert(e.response.data.message)
     }
   }
 
@@ -44,18 +45,35 @@ const CreateProjectGradeCat = observer(({ show, onHide }) => {
       <Modal.Body>
         <Dropdown className="mt-3">
           <Dropdown.Toggle>
-            {laboratoryGroup.selectedLabGroup.labGroup ||
-              "Choose laboratory group"}
+            {subject.selectedSubject.name || "Choose subject"}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            {laboratoryGroup.labGroups.map((group) => (
+            {subject.subjects.map((subj) => (
               <Dropdown.Item
-                onClick={() => laboratoryGroup.setSelectedLabGroup(group)}
-                key={group.id}
+                onClick={() => subject.setSelectedSubject(subj)}
+                key={subj.id}
               >
-                {group.labGroup}
+                {subj.name}
               </Dropdown.Item>
             ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown className="mt-3">
+          <Dropdown.Toggle>
+            {laboratoryGroup.selectedLabGroup.labGroup ||
+              "Choose laboratiry group"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {laboratoryGroup.labGroups
+              .filter((group) => group.subjectId === subject.selectedSubject.id)
+              .map((group) => (
+                <Dropdown.Item
+                  onClick={() => laboratoryGroup.setSelectedLabGroup(group)}
+                  key={group.id}
+                >
+                  {group.labGroup}
+                </Dropdown.Item>
+              ))}
           </Dropdown.Menu>
         </Dropdown>
         <Dropdown className="mt-3">

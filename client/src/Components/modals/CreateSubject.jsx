@@ -5,14 +5,14 @@ import { createSubject } from "../../http/subjectAPI"
 const CreateSubject = ({ show, onHide }) => {
   const [value, setValue] = useState("")
 
-  const addSubject = () => {
+  const addSubject = async () => {
     try {
-      createSubject({ name: value }).then((data) => {
+      await createSubject({ name: value }).then((data) => {
         setValue("")
         onHide()
       })
     } catch (e) {
-      console.log(e)
+      alert(e.response.data.message)
     }
   }
 

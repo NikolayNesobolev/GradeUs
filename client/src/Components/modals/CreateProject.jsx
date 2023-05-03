@@ -6,6 +6,7 @@ import { fetchLabGroups } from "../../http/labGroupAPI"
 import { createProject } from "../../http/projectAPI"
 
 const CreateProject = observer(({ show, onHide }) => {
+  const { subject } = useContext(Context)
   const { laboratoryGroup } = useContext(Context)
 
   const [name, setName] = useState("")
@@ -14,9 +15,9 @@ const CreateProject = observer(({ show, onHide }) => {
     fetchLabGroups().then((data) => laboratoryGroup.setLabGroups(data))
   }, [laboratoryGroup])
 
-  const addProject = () => {
+  const addProject = async () => {
     try {
-      createProject({
+      await createProject({
         projectName: name,
         labGroupId: laboratoryGroup.selectedLabGroup.id,
       }).then((data) => {
@@ -24,7 +25,7 @@ const CreateProject = observer(({ show, onHide }) => {
         onHide()
       })
     } catch (e) {
-      console.log(e)
+      alert(e.response.data.message)
     }
   }
 
@@ -38,12 +39,27 @@ const CreateProject = observer(({ show, onHide }) => {
       <Modal.Body>
         <Dropdown className="mt-3">
           <Dropdown.Toggle>
+            {subject.selectedSubject.name || "Choose subject"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {subject.subjects.map((subj) => (
+              <Dropdown.Item
+                onClick={() => subject.setSelectedSubject(subj)}
+                key={subj.id}
+              >
+                {subj.name}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown className="mt-3">
+          <Dropdown.Toggle>
             {laboratoryGroup.selectedLabGroup.labGroup ||
-              "Choose laboratory group"}
+              "Choose laboratiry group"}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {laboratoryGroup.labGroups
-              //.filter(() => labGroupState === user.labGroupId)
+              .filter((group) => group.subjectId === subject.selectedSubject.id)
               .map((group) => (
                 <Dropdown.Item
                   onClick={() => laboratoryGroup.setSelectedLabGroup(group)}

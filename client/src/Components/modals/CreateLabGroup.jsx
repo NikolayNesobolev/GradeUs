@@ -14,9 +14,9 @@ const CreateLabGroup = observer(({ show, onHide }) => {
     fetchSubjects().then((data) => subject.setSubjects(data))
   }, [subject])
 
-  const addLabGroup = () => {
+  const addLabGroup = async () => {
     try {
-      createLabGroup({
+      await createLabGroup({
         labGroup: name,
         subjectId: subject.selectedSubject.id,
       }).then((data) => {
@@ -24,7 +24,7 @@ const CreateLabGroup = observer(({ show, onHide }) => {
         onHide()
       })
     } catch (e) {
-      console.log(e)
+      alert(e.response.data.message)
     }
   }
   return (
@@ -40,15 +40,14 @@ const CreateLabGroup = observer(({ show, onHide }) => {
             {subject.selectedSubject.name || "Choose subject"}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            {subject.subjects
-              .map((subj) => (
-                <Dropdown.Item
-                  onClick={() => subject.setSelectedSubject(subj)}
-                  key={subj.id}
-                >
-                  {subj.name}
-                </Dropdown.Item>
-              ))}
+            {subject.subjects.map((subj) => (
+              <Dropdown.Item
+                onClick={() => subject.setSelectedSubject(subj)}
+                key={subj.id}
+              >
+                {subj.name}
+              </Dropdown.Item>
+            ))}
           </Dropdown.Menu>
         </Dropdown>
         <Form>

@@ -2,9 +2,16 @@ const { LabGroup } = require("../models/models")
 const ApiError = require("../error/ApiError")
 
 class LabGroupController {
-  async create(req, res) {
-    const { name, labGroup, subjectId } = req.body
-    const labGroupType = await LabGroup.create({ name, labGroup, subjectId })
+  async create(req, res, next) {
+    const { labGroup, subjectId } = req.body
+    if (!labGroup || !subjectId) {
+      return next(
+        ApiError.badRequest(
+          "You must choose subject and specify the name of the laboratory group"
+        )
+      )
+    }
+    const labGroupType = await LabGroup.create({ labGroup, subjectId })
     return res.json({ labGroupType })
   }
 
@@ -30,7 +37,7 @@ class LabGroupController {
     } catch (e) {}
   }
 
-  async deleteLabGroup(req, res) {
+  async deleteLabGroup(req, res, next) {
     const { id } = req.params
     const group = await LabGroup.destroy({ where: { id } })
     return res.json({ message: "Successfully deleted!" })

@@ -2,8 +2,15 @@ const { Project } = require("../models/models")
 const ApiError = require("../error/ApiError")
 
 class ProjectController {
-  async create(req, res) {
-    const { projectName, project, labGroupId } = req.body
+  async create(req, res, next) {
+    const { projectName, labGroupId } = req.body
+    if (!labGroupId || !projectName) {
+      return next(
+        ApiError.badRequest(
+          "You must choose subject, laboratory group and specify the name of the project"
+        )
+      )
+    }
     const projectObj = await Project.create({
       projectName,
       labGroupId,

@@ -33,6 +33,11 @@
       "react-app/jest"
     ]
   },
+  "files": [
+    "dist",
+    "README.md",
+    "src/**"
+  ],
   "browserslist": {
     "production": [
       ">0.2%",

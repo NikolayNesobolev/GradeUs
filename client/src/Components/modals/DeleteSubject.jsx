@@ -13,12 +13,16 @@ const DeleteSubject = observer(({ show, onHide }) => {
 
   const deleteSubj = () => {
     try {
-      deleteSubject(subject.selectedSubject.id).then((data) => {
-        subject.setSelectedSubject("")
-        onHide()
-      })
+      if (typeof subject.selectedSubject.id === "undefined") {
+        throw new SyntaxError("You must to choose a subject from the list!")
+      } else {
+        deleteSubject(subject.selectedSubject.id).then((data) => {
+          subject.setSelectedSubject("")
+          onHide()
+        })
+      }
     } catch (e) {
-      console.log(e)
+      alert(e.message)
     }
   }
 

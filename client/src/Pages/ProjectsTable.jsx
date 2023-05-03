@@ -83,7 +83,7 @@ const ProjectTable = observer(() => {
       developerKey: "AIzaSyBaEhtIup7qIpdLGAzY7DUhLhbAvLPl9L8",
       viewId: "DOCS",
       token:
-        "ya29.a0AWY7CklpDjJZ2h6Qs0fu_CfmeVn9cCnvvtFQEAE88gmLLuG3A7JJVlEQqyXOQrXy7sIOOSZjtpU3OALpRm4aNSgokwCBI5N_mDqfBIehtMR3MbVYEzKLRdgA95Q7Q9l5JuU1K9a_qi2lz1_KK3Re7RjhJkAPaCgYKAQoSARMSFQG1tDrpj9XInKO9UcbZQwufNhN-xQ0163",
+        "ya29.a0AWY7CklaKttlpdPogR74vTyCEKKFlFczgzFHGpwBdLOO73_lOQumr1vyCsxUCvCm4qUJecf_ZWV330CBeYAd-Aer7o_g55F6ywP4vT9KujEZnJ3pini8YPya_N48Qh0fQ8lq4u2nLs1KBc9yTCYolrQMjGvJaCgYKARYSARMSFQG1tDrpniOSrtfJMDUMlDZpPixwlQ0163",
       showUploadView: true,
       showUploadFolders: true,
       supportDrives: true,

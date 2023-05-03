@@ -131,24 +131,24 @@ const Admin = observer(() => {
             className="mt-3 p-2"
             onClick={() => setProjectGradeCatVisible(true)}
           >
-            Create grade categories
+            Create grade categories for project
           </Button>
         </Col>
         <Col>
           <Button
-            variant="outline-danger"
+            variant="outline-secondary"
             className="mt-3 p-2"
             onClick={() => setChangeProjectGradeCatVis(true)}
           >
-            Update grade categories
+            Update project grade categories
           </Button>
         </Col>
       </Row>
       <Row className="mt-3">
         <Col>
           <Button
-            //variant="outline-primary"
-            variant="outline-warning"
+            //variant="outline-secondary"
+            variant="outline-danger"
             className="mt-3 p-2"
             onClick={() => setStudentModalVisible(true)}
           >

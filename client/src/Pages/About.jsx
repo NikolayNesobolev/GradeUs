@@ -10,7 +10,11 @@ const About = () => (
       </Col>
       <Col md={5}>
         <h2>GradeUs</h2>
-        <p>About text...</p>
+        <p>
+          The application allows professors to unite students into groups and
+          evaluate their projects. Allows students to upload files of their
+          projects with large sizes.
+        </p>
       </Col>
     </Row>
   </Container>

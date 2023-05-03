@@ -7,6 +7,7 @@ import { fetchProjects } from "../../http/projectAPI"
 import { fetchLabGroups } from "../../http/labGroupAPI"
 
 const AssignProject = observer(({ show, onHide }) => {
+  const { subject } = useContext(Context)
   const { projectObj } = useContext(Context)
   const { laboratoryGroup } = useContext(Context)
   const { user } = useContext(Context)
@@ -23,15 +24,26 @@ const AssignProject = observer(({ show, onHide }) => {
 
   const editPriv = () => {
     try {
-      editUserPrivileg(user.selectedUser.name, {
-        projectId: projectObj.selectedProject.id,
-      }).then((data) => {
-        user.setSelectedUser("")
-        projectObj.setSelectedProject("")
-        onHide()
-      })
+      if (
+        typeof subject.selectedSubject.name === "undefined" ||
+        typeof laboratoryGroup.selectedLabGroup.labGroup === "undefined" ||
+        typeof user.selectedUser.name === "undefined" ||
+        typeof projectObj.selectedProject.id === "undefined"
+      ) {
+        throw new SyntaxError(
+          "You must to choose a subject, laboratory and student's name and project from the list!"
+        )
+      } else {
+        editUserPrivileg(user.selectedUser.name, {
+          projectId: projectObj.selectedProject.id,
+        }).then((data) => {
+          user.setSelectedUser("")
+          projectObj.setSelectedProject("")
+          onHide()
+        })
+      }
     } catch (e) {
-      console.log(e)
+      alert(e.message)
     }
   }
 
@@ -45,19 +57,35 @@ const AssignProject = observer(({ show, onHide }) => {
       <Modal.Body>
         <Dropdown className="mt-3">
           <Dropdown.Toggle>
-            {laboratoryGroup.selectedLabGroup.labGroup ||
-              "Choose laboratory group"}
+            {subject.selectedSubject.name || "Choose subject"}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            {laboratoryGroup.labGroups.map((group) => (
+            {subject.subjects.map((subj) => (
               <Dropdown.Item
-                active={group.id === laboratoryGroup.selectedLabGroup.id}
-                onClick={() => laboratoryGroup.setSelectedLabGroup(group)}
-                key={group.id}
+                onClick={() => subject.setSelectedSubject(subj)}
+                key={subj.id}
               >
-                {group.labGroup}
+                {subj.name}
               </Dropdown.Item>
             ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown className="mt-3">
+          <Dropdown.Toggle>
+            {laboratoryGroup.selectedLabGroup.labGroup ||
+              "Choose laboratiry group"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {laboratoryGroup.labGroups
+              .filter((group) => group.subjectId === subject.selectedSubject.id)
+              .map((group) => (
+                <Dropdown.Item
+                  onClick={() => laboratoryGroup.setSelectedLabGroup(group)}
+                  key={group.id}
+                >
+                  {group.labGroup}
+                </Dropdown.Item>
+              ))}
           </Dropdown.Menu>
         </Dropdown>
         <Dropdown className="mt-3">

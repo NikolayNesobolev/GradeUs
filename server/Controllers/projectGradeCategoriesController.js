@@ -2,7 +2,7 @@ const { ProjectGradeCategories } = require("../models/models")
 const ApiError = require("../error/ApiError")
 
 class ProjectGradeCategoriesController {
-  async create(req, res) {
+  async create(req, res, next) {
     const {
       category0,
       category1,
@@ -11,6 +11,20 @@ class ProjectGradeCategoriesController {
       projectId,
       labGroupId,
     } = req.body
+    if (
+      !labGroupId ||
+      !projectId ||
+      !category0 ||
+      !category1 ||
+      !category2 ||
+      !category3
+    ) {
+      return next(
+        ApiError.badRequest(
+          "You must choose laboratory group, project and specify grade categories!"
+        )
+      )
+    }
     const projectCategoriesObj = await ProjectGradeCategories.create({
       category0,
       category1,

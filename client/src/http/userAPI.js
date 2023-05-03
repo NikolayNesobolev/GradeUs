@@ -32,15 +32,16 @@ export const createUser = async (
   roleId,
   projectId
 ) => {
-  const { data } = await $authHost.post("api/user/", {
+  const { data } = await $authHost.post(
+    "api/user/",
     mail,
     password,
     name,
     index,
     labGroupId,
     roleId,
-    projectId,
-  })
+    projectId
+  )
   return jwt_decode(data.token)
 }
 
@@ -69,5 +70,10 @@ export const check = async () => {
 
 export const fetchUsers = async (labGroupId) => {
   const { data } = await $host.get("api/user", { params: { labGroupId } })
+  return data
+}
+
+export const deleteUser = async (id) => {
+  const { data } = await $authHost.delete("api/user/" + id)
   return data
 }
