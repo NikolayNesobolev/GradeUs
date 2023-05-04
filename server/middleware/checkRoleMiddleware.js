@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-module.exports = function (roleId) {
+module.exports = function (allowSuperRoles) {
   return function (req, res, next) {
     if (req.method === "OPTIONS") {
       next()
@@ -11,7 +11,7 @@ module.exports = function (roleId) {
         return res.status(401).json({ message: "The user is not logged in" })
       }
       const decoded = jwt.verify(token, process.env.SECRET_KEY)
-      if (decoded.roleId !== roleId) {
+      if (!allowSuperRoles.includes(decoded.roleId)) {
         return res.status(403).json({ message: "No access" })
       }
       req.user = decoded

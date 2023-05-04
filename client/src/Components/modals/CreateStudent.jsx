@@ -4,14 +4,13 @@ import { Context } from "../.."
 import { observer } from "mobx-react-lite"
 import { fetchLabGroups } from "../../http/labGroupAPI"
 import { fetchRoles } from "../../http/roleAPI"
-import { fetchProjects } from "../../http/projectAPI"
 import { createUser } from "../../http/userAPI"
 
 const CreateStudent = observer(({ show, onHide }) => {
-  const { user } = useContext(Context)
-  const { roleObj } = useContext(Context)
+  const { subject } = useContext(Context)
   const { laboratoryGroup } = useContext(Context)
   const { projectObj } = useContext(Context)
+  const { roleObj } = useContext(Context)
 
   const [mail, setMail] = useState("")
   const [password, setPassword] = useState("")
@@ -23,16 +22,16 @@ const CreateStudent = observer(({ show, onHide }) => {
     fetchRoles().then((data) => roleObj.setRoles(data))
   }, [laboratoryGroup, roleObj, projectObj])
 
-  const addUser = () => {
+  const addUser = async () => {
     try {
-      createUser({
+      await createUser({
         mail,
         password,
         name,
         index,
-        labGroupId: laboratoryGroup.selectedLabGroup.labGroup,
-        roleId: roleObj.selectedRole.role,
-        projectId: projectObj.selectedProject.projectName,
+        labGroupId: laboratoryGroup.selectedLabGroup.id,
+        roleId: roleObj.selectedRole.id,
+        projectId: projectObj.selectedProject.id,
       }).then((data) => {
         setMail("")
         setPassword("")
@@ -49,7 +48,7 @@ const CreateStudent = observer(({ show, onHide }) => {
     <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Create student
+          Create student account
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -60,31 +59,56 @@ const CreateStudent = observer(({ show, onHide }) => {
             className="mt-3"
             placeholder={"Student's mail"}
           />
+        </Form>
+        <Form>
           <Form.Control
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="mt-3"
             placeholder={"Student's password"}
+            type="password"
           />
+        </Form>
+        <Form>
           <Form.Control
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="mt-3"
             placeholder={"Student's name"}
           />
+        </Form>
+        <Form>
           <Form.Control
             value={index}
             onChange={(e) => setIndex(e.target.value)}
             className="mt-3"
             placeholder={"Student's index"}
           />
-          <Dropdown className="mt-3">
-            <Dropdown.Toggle>
-              {laboratoryGroup.selectedLabGroup.labGroup ||
-                "Student's laboratory group"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {laboratoryGroup.labGroups.map((group) => (
+        </Form>
+        <Dropdown className="mt-3">
+          <Dropdown.Toggle>
+            {subject.selectedSubject.name || "Choose subject"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {subject.subjects.map((subj) => (
+              <Dropdown.Item
+                onClick={() => subject.setSelectedSubject(subj)}
+                key={subj.id}
+              >
+                {subj.name}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown className="mt-3">
+          <Dropdown.Toggle>
+            {laboratoryGroup.selectedLabGroup.labGroup ||
+              "Choose laboratiry group"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {laboratoryGroup.labGroups
+              .filter((group) => group.subjectId === subject.selectedSubject.id)
+              .map((group) => (
                 <Dropdown.Item
                   onClick={() => laboratoryGroup.setSelectedLabGroup(group)}
                   key={group.id}
@@ -92,29 +116,19 @@ const CreateStudent = observer(({ show, onHide }) => {
                   {group.labGroup}
                 </Dropdown.Item>
               ))}
-            </Dropdown.Menu>
-          </Dropdown>
-          <Dropdown className="mt-3">
-            <Dropdown.Toggle>
-              {roleObj.selectedRole.role || "Student's role"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {roleObj.roles.map((role) => (
-                <Dropdown.Item
-                  onClick={() => roleObj.setSelectedRole(role)}
-                  key={role.id}
-                >
-                  {role.role}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-          <Dropdown className="mt-3">
-            <Dropdown.Toggle>
-              {projectObj.selectedProject.projectName || "Student's project"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {projectObj.projects.map((proj) => (
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown className="mt-3">
+          <Dropdown.Toggle>
+            {projectObj.selectedProject.projectName || "Student's project"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {projectObj.projects
+              .filter(
+                (proj) =>
+                  proj.labGroupId === laboratoryGroup.selectedLabGroup.id
+              )
+              .map((proj) => (
                 <Dropdown.Item
                   onClick={() => projectObj.setSelectedProject(proj)}
                   key={proj.id}
@@ -122,9 +136,23 @@ const CreateStudent = observer(({ show, onHide }) => {
                   {proj.projectName}
                 </Dropdown.Item>
               ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </Form>
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown className="mt-3">
+          <Dropdown.Toggle>
+            {roleObj.selectedRole.role || "Student's role"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {roleObj.roles.map((role) => (
+              <Dropdown.Item
+                onClick={() => roleObj.setSelectedRole(role)}
+                key={role.id}
+              >
+                {role.role}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="outline-success" onClick={addUser}>

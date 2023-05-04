@@ -20,6 +20,7 @@ import { fetchUsers } from "../http/userAPI"
 import { fetchProjectGradeCategories } from "../http/projectGradeCategoriesAPI"
 import { fetchCategoriesGrade } from "../http/categoriesGradeAPI"
 import { fetchGrades } from "../http/gradeAPI"
+import DeleteGrade from "../Components/modals/DeleteGrade"
 
 const Admin = observer(() => {
   const { user } = useContext(Context)
@@ -44,6 +45,7 @@ const Admin = observer(() => {
   const [changeProjectGradeCatVis, setChangeProjectGradeCatVis] =
     useState(false)
   const [delStudentModalVis, setDelStudentModalVis] = useState(false)
+  const [delGradeModalVis, setDelGradeModalVis] = useState(false)
 
   useEffect(() => {
     fetchProjects().then((data) => projectObj.setProjects(data))
@@ -67,7 +69,7 @@ const Admin = observer(() => {
       <Row className="mt-3">
         <Col>
           <Button
-            variant="outline-primary"
+            variant="outline-success"
             className="mt-3 p-2"
             onClick={() => setCreateSubjectModalVisible(true)}
           >
@@ -76,7 +78,7 @@ const Admin = observer(() => {
         </Col>
         <Col>
           <Button
-            variant="outline-primary"
+            variant="outline-danger"
             className="mt-3 p-2"
             onClick={() => setDelSubjectModalVis(true)}
           >
@@ -87,7 +89,7 @@ const Admin = observer(() => {
       <Row className="mt-3">
         <Col>
           <Button
-            variant="outline-secondary"
+            variant="outline-success"
             className="mt-3 p-2"
             onClick={() => setLabGroupModalVisible(true)}
           >
@@ -96,7 +98,7 @@ const Admin = observer(() => {
         </Col>
         <Col>
           <Button
-            variant="outline-secondary"
+            variant="outline-danger"
             className="mt-3 p-2"
             onClick={() => setDelLabGroupModalVis(true)}
           >
@@ -107,7 +109,7 @@ const Admin = observer(() => {
       <Row className="mt-3">
         <Col>
           <Button
-            variant="outline-primary"
+            variant="outline-success"
             className="mt-3 p-2"
             onClick={() => setProjectModalVisible(true)}
           >
@@ -116,7 +118,7 @@ const Admin = observer(() => {
         </Col>
         <Col>
           <Button
-            variant="outline-primary"
+            variant="outline-danger"
             className="mt-3 p-2"
             onClick={() => setDelProjectModalVis(true)}
           >
@@ -127,7 +129,7 @@ const Admin = observer(() => {
       <Row className="mt-3">
         <Col>
           <Button
-            variant="outline-secondary"
+            variant="outline-success"
             className="mt-3 p-2"
             onClick={() => setProjectGradeCatVisible(true)}
           >
@@ -136,7 +138,7 @@ const Admin = observer(() => {
         </Col>
         <Col>
           <Button
-            variant="outline-secondary"
+            variant="outline-primary"
             className="mt-3 p-2"
             onClick={() => setChangeProjectGradeCatVis(true)}
           >
@@ -147,8 +149,7 @@ const Admin = observer(() => {
       <Row className="mt-3">
         <Col>
           <Button
-            //variant="outline-secondary"
-            variant="outline-danger"
+            variant="outline-success"
             className="mt-3 p-2"
             onClick={() => setStudentModalVisible(true)}
           >
@@ -157,7 +158,7 @@ const Admin = observer(() => {
         </Col>
         <Col>
           <Button
-            variant="outline-primary"
+            variant="outline-danger"
             className="mt-3 p-2"
             onClick={() => setDelStudentModalVis(true)}
           >
@@ -168,7 +169,7 @@ const Admin = observer(() => {
       <Row className="mt-3">
         <Col>
           <Button
-            variant="outline-secondary"
+            variant="outline-primary"
             className="mt-3 p-2"
             onClick={() => setAssignProjectModalVisible(true)}
           >
@@ -177,11 +178,23 @@ const Admin = observer(() => {
         </Col>
         <Col>
           <Button
-            variant="outline-secondary"
+            variant="outline-primary"
             className="mt-3 p-2"
             onClick={() => setChangeRoleModalVisible(true)}
           >
             Change the role for the student
+          </Button>
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col></Col>
+        <Col>
+          <Button
+            variant="outline-danger"
+            className="mt-3 p-2"
+            onClick={() => setDelGradeModalVis(true)}
+          >
+            Delete student's grade
           </Button>
         </Col>
       </Row>
@@ -234,6 +247,10 @@ const Admin = observer(() => {
       <DeleteStudent
         show={delStudentModalVis}
         onHide={() => setDelStudentModalVis(false)}
+      />
+      <DeleteGrade
+        show={delGradeModalVis}
+        onHide={() => setDelGradeModalVis(false)}
       />
     </Container>
   )

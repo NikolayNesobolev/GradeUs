@@ -8,11 +8,9 @@ import { fetchUsers } from "../http/userAPI"
 import { Context } from ".."
 import { observer } from "mobx-react-lite"
 import { createGrade, fetchGrades } from "../http/gradeAPI"
-import {
-  createCategoryGrade,
-  fetchCategoriesGrade,
-} from "../http/categoriesGradeAPI"
+import { fetchCategoriesGrade } from "../http/categoriesGradeAPI"
 import useDrivePicker from "react-google-drive-picker"
+import { decryptToken } from "../utils/token"
 
 const ProjectTable = observer(() => {
   const { user } = useContext(Context)
@@ -22,7 +20,9 @@ const ProjectTable = observer(() => {
   const { gradeObj } = useContext(Context)
   const { catGradeObj } = useContext(Context)
 
-  const [openPicker] = useDrivePicker()
+  const token = decryptToken()
+
+  const [openPicker, authResponse] = useDrivePicker()
 
   const [grade0Val, setGrade0Val] = useState(5)
   const [grade1Val, setGrade1Val] = useState(5)
@@ -51,48 +51,49 @@ const ProjectTable = observer(() => {
     user,
   ])
 
-  const addGrade = () => {
+  const addGrade = async (projId) => {
     try {
-      createCategoryGrade({
+      console.log(projId)
+      const response = await createGrade({
+        projectId: projId,
         gradeCat0: Number(grade0Val),
         gradeCat1: Number(grade1Val),
         gradeCat2: Number(grade2Val),
         gradeCat3: Number(grade3Val),
-        projectId: projectObj.selectedProject.id,
-        labGroupId: laboratoryGroup.selectedLabGroup.id,
-      }).then((data) => {
-        let res =
-          (Number(grade0Val) +
-            Number(grade1Val) +
-            Number(grade2Val) +
-            Number(grade3Val)) /
-          4
-        createGrade({ gradeRes: res }).then((data) => {
-          res = 0
-        })
       })
+      console.log(response)
     } catch (e) {
       console.log(e)
     }
   }
 
   const handleOpenPicker = () => {
-    openPicker({
-      clientId:
-        "850154107871-s4eufgtldi9mip5568ucto6se5b9h5qb.apps.googleusercontent.com",
-      developerKey: "AIzaSyBaEhtIup7qIpdLGAzY7DUhLhbAvLPl9L8",
-      viewId: "DOCS",
-      token:
-        "ya29.a0AWY7CklaKttlpdPogR74vTyCEKKFlFczgzFHGpwBdLOO73_lOQumr1vyCsxUCvCm4qUJecf_ZWV330CBeYAd-Aer7o_g55F6ywP4vT9KujEZnJ3pini8YPya_N48Qh0fQ8lq4u2nLs1KBc9yTCYolrQMjGvJaCgYKARYSARMSFQG1tDrpniOSrtfJMDUMlDZpPixwlQ0163",
-      showUploadView: true,
-      showUploadFolders: true,
-      supportDrives: true,
-      multiselect: false,
-    })
+    try {
+      openPicker({
+        clientId:
+          "785324095489-dm0t8dls3db72u7ku65kmf37tokcveef.apps.googleusercontent.com",
+        developerKey: "AIzaSyDVuC2qr0zkShMCPjd5gpTnPSCS-VDEKp8",
+        viewId: "DOCS",
+        token:
+          "ya29.a0AWY7CklaKttlpdPogR74vTyCEKKFlFczgzFHGpwBdLOO73_lOQumr1vyCsxUCvCm4qUJecf_ZWV330CBeYAd-Aer7o_g55F6ywP4vT9KujEZnJ3pini8YPya_N48Qh0fQ8lq4u2nLs1KBc9yTCYolrQMjGvJaCgYKARYSARMSFQG1tDrpniOSrtfJMDUMlDZpPixwlQ0163",
+        showUploadView: true,
+        showUploadFolders: true,
+        supportDrives: true,
+        multiselect: false,
+        callbackFunction: (data) => {
+          if (data.action === "cancel") {
+            console.log("User clicked cancel/close button")
+          }
+          console.log(data)
+        },
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   return (
-    <Container className="d-flex jusify-content-center">
+    <Container className="c-flex jusify-content-center">
       <Table className="mt-5" bordered hover>
         <thead>
           <tr>
@@ -174,26 +175,72 @@ const ProjectTable = observer(() => {
                       </Form.Select>
                     </th>
                     <th>
-                      <Button
-                        className="d-flex"
-                        variant="outline-primary"
-                        onClick={() => handleOpenPicker()}
-                      >
-                        Send project
-                      </Button>
+                      {token.name !== student.name ? (
+                        <>
+                          {token.roleId === 1 ? (
+                            <Button
+                              className="d-flex"
+                              variant="outline-primary"
+                              onClick={() => handleOpenPicker()}
+                            >
+                              Send project
+                            </Button>
+                          ) : null}
+                        </>
+                      ) : (
+                        <Button
+                          className="d-flex"
+                          variant="outline-primary"
+                          onClick={() => handleOpenPicker()}
+                        >
+                          Send project
+                        </Button>
+                      )}
                     </th>
                     <th>
-                      <Button variant="outline-primary" onClick={addGrade}>
-                        Add grade
-                      </Button>
+                      {token.roleId !== 1 ? null : (
+                        <Button
+                          variant="outline-primary"
+                          onClick={() => addGrade(topic.id)}
+                        >
+                          Add grade
+                        </Button>
+                      )}
                     </th>
-                    {/*projectObj.projects.filter(
-                      (proj) => proj.labGroupId === labGroup?.id
-                    ).filter(grade=> grade.projectId === proj.)}*/}
                   </tr>
                 ))}
             </tbody>
           ))}
+      </Table>
+
+      <Table className="mt-5" bordered hover>
+        <thead>
+          <tr>
+            <th colSpan={1}>Laboratory group</th>
+            <th colSpan={5000}>{labGroup?.labGroup}</th>
+          </tr>
+          <tr style={{ background: "lightgray" }}>
+            <th>Student</th>
+            <th>Index_nr</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          {user.users
+            .filter((student) => student.labGroupId === labGroup?.id)
+            .map((student) => (
+              <tr key={student.id}>
+                <th key={student.id}>{student.name}</th>
+                <th>{student.index}</th>
+
+                {gradeObj.grade
+                  .filter((grade) => grade.projectId === student.projectId)
+                  .map((grade) => (
+                    <th key={grade.id}>{grade.gradeRes}</th>
+                  ))}
+              </tr>
+            ))}
+        </tbody>
       </Table>
     </Container>
   )

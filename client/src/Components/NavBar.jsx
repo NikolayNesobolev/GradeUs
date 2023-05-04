@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom"
 
 import { Context } from "../index"
 import { ADMIN_ROUTE, HOME_ROUTE, LOGIN_ROUTE } from "../utils/consts"
+import { decryptToken } from "../utils/token"
 
 const Styles = styled.div`
   a,
@@ -30,6 +31,8 @@ const NavBar = observer(() => {
     navigate(HOME_ROUTE)
   }
 
+  const token = decryptToken()
+
   return (
     <>
       <Styles>
@@ -48,12 +51,14 @@ const NavBar = observer(() => {
                     </Nav.Link>
                   </Nav>
                   <Nav className="ms-auto" style={{ color: "white" }}>
-                    <Button
-                      variant={"outline-light"}
-                      onClick={() => navigate(ADMIN_ROUTE)}
-                    >
-                      Admin Panel
-                    </Button>
+                    {token.roleId !== 3 ? (
+                      <Button
+                        variant={"outline-light"}
+                        onClick={() => navigate(ADMIN_ROUTE)}
+                      >
+                        Admin Panel
+                      </Button>
+                    ) : null}
                     <Button
                       variant={"outline-light"}
                       className="ms-2"

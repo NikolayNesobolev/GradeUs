@@ -28,12 +28,11 @@ const Home = observer(() => {
             <Col md={3}>
               <SubjectBar />
             </Col>
-          </Row>
-          <Row className="mt-4">
             <Col md={1}>
-              <LabGroupList />
+              <Col>
+                <LabGroupList />
+              </Col>
             </Col>
-            <Col md={11}></Col>
           </Row>
         </Container>
       ) : (

@@ -7,14 +7,13 @@ export const createCategoryGrade = async (
   gradeCat3,
   gradeId
 ) => {
-  const { data } = await $authHost.post(
-    "api/category_grade",
+  const { data } = await $authHost.post("api/category_grade", {
     gradeCat0,
     gradeCat1,
     gradeCat2,
     gradeCat3,
-    gradeId
-  )
+    gradeId,
+  })
   return data
 }
 

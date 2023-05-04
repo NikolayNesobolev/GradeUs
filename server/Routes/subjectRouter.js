@@ -3,8 +3,10 @@ const router = new Router()
 const subjectController = require("../Controllers/subjectController")
 const checkRole = require("../middleware/checkRoleMiddleware")
 
-router.post("/", checkRole(1), subjectController.create)
+const superRole = [1]
+
+router.post("/", checkRole(superRole), subjectController.create)
 router.get("/", subjectController.getAll)
-router.delete("/:id", checkRole(1), subjectController.deleteSubject)
+router.delete("/:id", checkRole(superRole), subjectController.deleteSubject)
 
 module.exports = router

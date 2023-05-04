@@ -92,8 +92,12 @@ class UserController {
     try {
       const { mail, password, name, index, labGroupId, roleId, projectId } =
         req.body
-      if (!mail || !password) {
-        return next(ApiError.badRequest("Incorrect email or password"))
+      if (!mail || !password || !name || !index || !labGroupId || !roleId) {
+        return next(
+          ApiError.badRequest(
+            "Please enter mail, password, name, index of the new student and choose laboratory group and the role!"
+          )
+        )
       }
       const candidate = await User.findOne({ where: { mail } })
       if (candidate) {

@@ -3,9 +3,12 @@ const router = new Router()
 const labGroupController = require("../Controllers/labGroupController")
 const checkRole = require("../middleware/checkRoleMiddleware")
 
-router.post("/", checkRole(1), labGroupController.create)
+const allowSuperRoles = [1, 2]
+const superRole = [1]
+
+router.post("/", checkRole(allowSuperRoles), labGroupController.create)
 router.get("/", labGroupController.getAll)
 router.get("/:id", labGroupController.getOne)
-router.delete("/:id", checkRole(1), labGroupController.deleteLabGroup)
+router.delete("/:id", checkRole(superRole), labGroupController.deleteLabGroup)
 
 module.exports = router

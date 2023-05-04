@@ -3,8 +3,14 @@ const router = new Router()
 const CategoriesGradeController = require("../Controllers/categoriesGradeController")
 const checkRole = require("../middleware/checkRoleMiddleware")
 
-router.post("/", checkRole(1), CategoriesGradeController.create)
+const superRole = [1]
+
+router.post("/", checkRole(superRole), CategoriesGradeController.create)
 router.get("/", CategoriesGradeController.getAll)
-router.put("/:id", checkRole(1), CategoriesGradeController.editCategoryGrade)
+router.put(
+  "/:id",
+  checkRole(superRole),
+  CategoriesGradeController.editCategoryGrade
+)
 
 module.exports = router

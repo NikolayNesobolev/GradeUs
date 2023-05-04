@@ -1,15 +1,30 @@
-const { Grade } = require("../models/models")
+const { Grade, CategoriesGrade } = require("../models/models")
 const ApiError = require("../error/ApiError")
 
 class GradeController {
   async create(req, res, next) {
     try {
-      const { gradeRes, projectId } = req.body
-      const grades = await Grade.create({
-        gradeRes,
+      const { projectId, gradeCat0, gradeCat1, gradeCat2, gradeCat3 } = req.body
+      let gradeCatRes =
+        (Number(gradeCat0) +
+          Number(gradeCat1) +
+          Number(gradeCat2) +
+          Number(gradeCat3)) /
+        4
+      const grade = await Grade.create({
+        gradeRes: Math.round(Number(gradeCatRes)),
         projectId,
       })
-      return res.json({ grades })
+
+      await CategoriesGrade.create({
+        gradeCat0,
+        gradeCat1,
+        gradeCat2,
+        gradeCat3,
+        gradeId: grade.id,
+      })
+
+      return res.json({ grade })
     } catch (e) {
       next(ApiError.badRequest(e.message))
     }
@@ -22,21 +37,10 @@ class GradeController {
     } catch (e) {}
   }
 
-  async editGrade(req, res) {
-    try {
-      const { id } = req.params
-      let gradeResult
-      const { gradeRes } = req.body
-      if (gradeRes) {
-        gradeResult = await Grade.update(
-          { gradeRes: req.body.gradeRes },
-          { where: { id } }
-        )
-      }
-      return res.json({ message: "Successfully updated!" })
-    } catch (e) {
-      return res.status(500).json({ message: "Update failed!" })
-    }
+  async deleteGrade(req, res) {
+    const { id } = req.params
+    const grade = await Grade.destroy({ where: { id } })
+    return res.json({ message: "Successfully deleted!" })
   }
 }
 

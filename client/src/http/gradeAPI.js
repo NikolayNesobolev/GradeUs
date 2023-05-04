@@ -1,7 +1,7 @@
 import { $authHost, $host } from "./index"
 
-export const createGrade = async (gradeRes, projectId) => {
-  const { data } = await $authHost.post("api/grade", gradeRes, projectId)
+export const createGrade = async (payload) => {
+  const { data } = await $authHost.post("api/grade", payload)
   return data
 }
 
@@ -10,9 +10,7 @@ export const fetchGrades = async () => {
   return data
 }
 
-export const editProjectGradeCat = async (id, { gradeRes }) => {
-  const { data } = await $authHost.put("api/grade/" + id, {
-    gradeRes,
-  })
+export const deleteGrade = async (id) => {
+  const { data } = await $authHost.delete("api/grade/" + id)
   return data
 }
